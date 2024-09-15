@@ -53,6 +53,7 @@
     <script>
         const consoleDiv = document.getElementById('console');
         const TOTAL_LINES = 250; // Total lines to simulate before completing
+        let hackingTimer;
 
         const cypherArt = `
 ───────────────────────────────────────────────────────────────────────────────────────────────────
@@ -184,55 +185,42 @@
         }
 
         function generateLine() {
-            const indentations = ['    ', '        ', '            '];
-            const indentation = indentations[Math.floor(Math.random() * indentations.length)];
-            const lineContent = generateLinuxCommand();
-            const coloredLine = colorLine(lineContent);
-            return `${indentation}${coloredLine}`;
+            const indent = ' '.repeat(Math.floor(Math.random() * 8));
+            const linuxCommand = generateLinuxCommand();
+            const message = generateMessage();
+            const color = ['green', 'red', 'yellow', 'blue', 'cyan', 'orange'][Math.floor(Math.random() * 6)];
+
+            return `${indent}<span class="${color}">${linuxCommand}</span> -- ${message}`;
         }
 
-        function colorLine(lineContent) {
-            const randomFactor = Math.random();
-            let colorClass = 'green';
-            if (randomFactor < 0.1) {
-                colorClass = 'red';
-            } else if (randomFactor < 0.2) {
-                colorClass = 'yellow';
-            } else if (randomFactor < 0.3) {
-                colorClass = 'blue';
-            } else if (randomFactor < 0.4) {
-                colorClass = 'cyan';
-            } else if (randomFactor < 0.5) {
-                colorClass = 'orange';
-            }
-            return `<span class="${colorClass}">${lineContent}</span>`;
-        }
+        function startHackingSimulation(linesPrinted) {
+            if (linesPrinted < TOTAL_LINES) {
+                const line = generateLine();
+                consoleDiv.innerHTML += line + '\n';
+                consoleDiv.scrollTop = consoleDiv.scrollHeight;
 
-        function startHackingSimulation(lineIndex = 0) {
-            if (lineIndex < TOTAL_LINES) {
-                if (lineIndex % 30 === 0) { // Show progress bar every 30 lines
-                    simulateProgressBar('Initializing system...', Math.min(lineIndex / 3, 100), () => {
-                        setTimeout(() => {
-                            consoleDiv.innerHTML += generateLine() + '\n';
-                            consoleDiv.scrollTop = consoleDiv.scrollHeight;
-                            setTimeout(() => startHackingSimulation(lineIndex + 1), Math.random() * 200 + 100);
-                        }, 500); // Delay after progress bar
-                    });
-                } else {
-                    consoleDiv.innerHTML += generateLine() + '\n';
-                    consoleDiv.scrollTop = consoleDiv.scrollHeight;
-                    setTimeout(() => startHackingSimulation(lineIndex + 1), Math.random() * 200 + 100);
-                }
+                setTimeout(() => startHackingSimulation(linesPrinted + 1), Math.random() * 150 + 50);
             } else {
-                setTimeout(() => {
-                    consoleDiv.innerHTML += `<span class="green">Hacking sequence completed successfully.</span>\n`;
-                    consoleDiv.scrollTop = consoleDiv.scrollHeight;
-                }, 500);
+                simulateProgressBar('Cloning sensitive data', 0, finalizeSimulation);
             }
         }
 
-        // Start the simulation
+        function finalizeSimulation() {
+            const randomSize = (Math.random() * 100).toFixed(2);
+            const totalFiles = Math.floor(Math.random() * 1000) + 500;
+            consoleDiv.innerHTML += `<span class="yellow">Data cloned: ${randomSize} GB, Total files cloned: ${totalFiles}</span>\n`;
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+        }
+
+        function startTimer() {
+            hackingTimer = setTimeout(() => {
+                finalizeSimulation();
+                clearTimeout(hackingTimer);
+            }, 60000); // 1 minute
+        }
+
         printInitialMessages();
+        startTimer();
     </script>
 </body>
 </html>
